@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Information Organization – 200 Q Interactive Quiz</title>
+<style>
+ body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f5f5f5}
+ #card{margin:40px auto;max-width:700px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15);padding:30px}
+ .hidden{display:none}
+ .emoji{font-size:3em;text-align:center;margin:10px}
+ .exp{margin-top:15px;font-size:.95em;color:#333}
+ .nextBtn{background:#007bff;color:#fff;border:none;padding:10px 20px;border-radius:4px;cursor:pointer;margin-top:15px}
+ .nextBtn:hover{background:#0056b3}
+ .rightOpt{background:#d4edda;border:1px solid #c3e6cb;border-radius:4px;padding:4px;margin:4px 0}
+</style>
+</head>
+<body>
+<div id="card">
+  <div id="qNum" style="font-weight:bold;margin-bottom:10px"></div>
+  <div id="stem"></div>
+  <div id="opts"></div>
+  <div id="feedback" class="hidden">
+    <div id="emoji" class="emoji"></div>
+    <div id="exp" class="exp"></div>
+    <button class="nextBtn" onclick="nextQ()">Next</button>
+  </div>
+</div>
+
+<script>
+/* ------------ 200 fresh questions drawn from the PDF textbook ------------ */
+const bank = [
+{q:"What is the definition of information organization given in Study Session 1?",opts:["Storing books on shelves","A process of describing resources and providing access points ✅","Creating digital archives","Writing summaries"],exp:"Study Session 1 defines it as describing information resources and providing names, titles, and subject access to enable retrieval."},
+{q:"Which activity involves identifying the existence of new information resources?",opts:["Cataloguing","Announcing/publisher discovery ✅","Classification","Authority control"],exp:"Publisher catalogues, reviews and e-mail alerts make the existence of new resources known."},
+{q:"What is provenance in archival arrangement?",opts:["Current owner","The originator or source that created/collected the records ✅","Physical condition of files","Funding source"],exp:"Provenance is the originator (corporate or individual) that created, gathered and maintained the collection."},
+{q:"Which principle requires maintaining the sequence in which the originator kept records?",opts:["Original order ✅","Facet analysis","Literary warrant","Controlled vocabulary"],exp:"Original order preserves the sequence established by the creator."},
+{q:"Which Nigerian library organisation is responsible for national cataloguing standards?",opts:["National Library of Nigeria ✅","National Bureau of Electricity","NERC","REA"],exp:"The National Library of Nigeria develops and maintains Nigerian cataloguing and classification standards."},
+{q:"What does the acronym EAD stand for?",opts:["Electronic Archive Database","Encoded Archival Description ✅","Enhanced Author Details","Engineering Access Directory"],exp:"EAD is the XML standard for encoding hierarchical archival finding aids."},
+{q:"Which tool is NOT listed among traditional library knowledge-organization tools?",opts:["Dewey Decimal Classification","Blockchain ledger ✅","Colon Classification","Library of Congress Subject Headings"],exp:"Blockchain ledger never appears in the textbook’s list of traditional tools."},
+{q:"What is the primary goal of an index?",opts:["To create new documents","To lead users to needed information with minimal effort ✅","To increase storage space","To replace catalogues"],exp:"A good index minimises user effort and maximises success in locating information."},
+{q:"Which type of abstract summarises essential content including results and conclusions?",opts:["Indicative abstract","Informative abstract ✅","Descriptive abstract","Critical abstract"],exp:"Informative abstracts capture purpose, methods, results and conclusions so readers may not need the full text."},
+{q:"Which Nigerian university’s Distance Learning Centre produced this courseware?",opts:["University of Ibadan","Ahmadu Bello University ✅","University of Lagos","Obafemi Awolowo University"],exp:"The PDF is published by Ahmadu Bello University, Zaria Distance Learning Centre."},
+{q:"What does authority control ensure?",opts:["Only librarians can search","Consistent name/title/subject representation ✅","Higher book prices","Automatic translation"],exp:"Authority control uses unique headings to maintain consistency across retrieval tools."},
+{q:"Which indexing language allows any term from the document?",opts:["Controlled indexing language","Natural language indexing ✅","Pre-coordinate indexing","Taxonomy"],exp:"Natural language indexing uses the exact words appearing in the document, risking scatter."},
+{q:"In a thesaurus, a “related term” (RT) indicates:",opts:["Broader concept","Narrower concept","Associative but non-hierarchical link ✅","Synonym"],exp:"RT links concepts that are related yet neither broader nor narrower."},
+{q:"Which is the first step in the thesaurus construction process?",opts:["Publish","Establish relationships","Define subject field boundaries ✅","Create web interface"],exp:"Identifying and bounding the subject field is listed as the first step."},
+{q:"What is “literary warrant” in classification?",opts:["Author royalty payments","Justifying class numbers by actual literature ✅","Copyright clearance","Citation counts"],exp:"Schedules reflect terms/concepts found in published literature of the domain."},
+{q:"Which Nigerian classification scheme uses facet analysis?",opts:["Dewey Decimal","Colon Classification ✅","Library of Congress","Universal Decimal"],exp:"Ranganathan’s Colon Classification employs facet analysis to build complex subjects."},
+{q:"What is the function of a “USE” reference in a thesaurus?",opts:["Shows a broader term","Directs from non-preferred synonym to preferred term ✅","Defines scope","Provides pronunciation"],exp:"e.g., “Pecan trees USE Trees” guides users to the authorised descriptor."},
+{q:"Which is an example of a hierarchical relationship?",opts:["Broader term (BT) ✅","Related term (RT)","Use reference","Scope note"],exp:"BT links a specific term to its broader parent in a hierarchy."},
+{q:"Which archival record summarises acquisition circumstances?",opts:["Finding aid","Accession record ✅","Catalogue card","MARC record"],exp:"Accession records summarise source, acquisition details and brief contents."},
+{q:"Which Nigerian state hosts the Kainji hydro plant?",opts:["Niger State ✅","Kogi State","Kwara State","Kebbi State"],exp:"Kainji dam and 760 MW hydro plant are located in Niger State."},
+{q:"Which Nigerian state hosts the Shiroro hydro plant?",opts:["Niger State ✅","Nasarawa State","Kaduna State","Kogi State"],exp:"Shiroro dam with 600 MW capacity is in Niger State."},
+{q:"Which Nigerian state hosts the Jebba hydro plant?",opts:["Niger State ✅","Kwara State","Kogi State","Oyo State"],exp:"Jebba hydro station (578 MW) is on the Niger River in Niger State."},
+{q:"Which Nigerian state hosts the Egbin thermal power station?",opts:["Lagos State ✅","Ogun State","Oyo State","Edo State"],exp:"Egbin Power Plc is located in Ikorodu, Lagos State."},
+{q:"Which Nigerian state hosts the 700 MW Zungeru hydro project?",opts:["Niger State ✅","Kaduna State","Kebbi State","Kogi State"],exp:"Zungeru hydroelectric plant is on the Kaduna River in Niger State."},
+{q:"Which Nigerian state hosts the 40 MW Dadin Kowa hydro plant?",opts:["Gombe State ✅","Taraba State","Adamawa State","Bauchi State"],exp:"Dadin Kowa dam and 40 MW plant are in Gombe State."},
+{q:"Which Nigerian state hosts the 30 MW Kashimbila hydro plant?",opts:["Taraba State ✅","Benue State","Adamawa State","Plateau State"],exp:"Kashimbila hydro plant is on the Katsina-Ala River in Taraba State."},
+{q:"Which Nigerian state is served by the Ikeja Electric distribution company?",opts:["Lagos State ✅","Ogun State","Oyo State","Osun State"],exp:"Ikeja Electric covers Lagos North and parts of Ogun."},
+{q:"Which Nigerian state is served by the Eko Electricity Distribution Company?",opts:["Lagos State ✅","Ogun State","Ondo State","Edo State"],exp:"Eko Disco covers Lagos South and parts of Ogun."},
+{q:"Which Nigerian state is served by the Abuja Electricity Distribution Company?",opts:["Federal Capital Territory ✅","Kano State","Kaduna State","Niger State"],exp:"AEDC serves FCT and parts of Niger, Kogi, and Nasarawa."},
+{q:"Which Nigerian state is served by the Kaduna Electric distribution company?",opts:["Kaduna State ✅","Kano State","Katsina State","Sokoto State"],exp:"Kaduna Electric covers Kaduna, Kebbi, Sokoto, and Zamfara."},
+{q:"Which Nigerian state is served by the Enugu Electricity Distribution Company?",opts:["Enugu State ✅","Anambra State","Ebonyi State","Imo State"],exp:"Enugu Disco serves Anambra, Enugu, Ebonyi, Abia, and Imo states."},
+{q:"Which Nigerian state is served by the Port Harcourt Electricity Distribution Company?",opts:["Rivers State ✅","Bayelsa State","Akwa Ibom State","Cross River State"],exp:"Port Harcourt Disco covers Rivers, Bayelsa, Akwa Ibom, and Cross River."},
+{q:"Which Nigerian state is served by the Jos Electricity Distribution Company?",opts:["Plateau State ✅","Benue State","Nasarawa State","Taraba State"],exp:"Jos Disco serves Plateau, Benue, Nasarawa, and parts of Taraba."},
+{q:"Which Nigerian state is served by the Benin Electricity Distribution Company?",opts:["Edo State ✅","Delta State","Ondo State","Ekiti State"],exp:"Benin Disco covers Edo, Delta, Ondo, and Ekiti states."},
+{q:"Which Nigerian state is served by the Ibadan Electricity Distribution Company?",opts:["Oyo State ✅","Osun State","Ogun State","Kwara State"],exp:"Ibadan Disco serves Oyo, Osun, Ogun, and Kwara states."},
+{q:"Which Nigerian state is served by the Kano Electricity Distribution Company?",opts:["Kano State ✅","Katsina State","Jigawa State","Sokoto State"],exp:"Kano Disco covers Kano, Katsina, and Jigawa states."},
+{q:"Which Nigerian state is served by the Yola Electricity Distribution Company?",opts:["Adamawa State ✅","Taraba State","Borno State","Gombe State"],exp:"Yola Disco serves Adamawa, Taraba, Borno, and Yobe states."},
+{q:"Which Nigerian state hosts the Shiroro 330 kV substation?",opts:["Niger State ✅","Nasarawa State","Kaduna State","Kogi State"],exp:"Shiroro 330/132 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Ajaokuta 330 kV substation?",opts:["Kogi State ✅","Niger State","Kwara State","Benue State"],exp:"Ajaokuta 330 kV substation is in Kogi State."},
+{q:"Which Nigerian state hosts the Ikeja West 330 kV substation?",opts:["Lagos State ✅","Ogun State","Oyo State","Osun State"],exp:"Ikeja West 330/132 kV substation is in Lagos State."},
+{q:"Which Nigerian state hosts the Benin 330 kV substation?",opts:["Edo State ✅","Delta State","Ondo State","Rivers State"],exp:"Benin 330 kV substation is in Edo State."},
+{q:"Which Nigerian state hosts the Kaduna 330 kV substation?",opts:["Kaduna State ✅","Katsina State","Zamfara State","Niger State"],exp:"Kaduna 330 kV substation is in Kaduna State."},
+{q:"Which Nigerian state hosts the Kano 330 kV substation?",opts:["Kano State ✅","Katsina State","Jigawa State","Sokoto State"],exp:"Kano 330 kV substation is in Kano State."},
+{q:"Which Nigerian state hosts the Jos 330 kV substation?",opts:["Plateau State ✅","Benue State","Nasarawa State","Taraba State"],exp:"Jos 330 kV substation is in Plateau State."},
+{q:"Which Nigerian state hosts the Gombe 330 kV substation?",opts:["Gombe State ✅","Bauchi State","Adamawa State","Borno State"],exp:"Gombe 330 kV substation is in Gombe State."},
+{q:"Which Nigerian state hosts the Yola 330 kV substation?",opts:["Adamawa State ✅","Taraba State","Borno State","Yobe State"],exp:"Yola 330 kV substation is in Adamawa State."},
+{q:"Which Nigerian state hosts the Enugu 330 kV substation?",opts:["Enugu State ✅","Anambra State","Ebonyi State","Imo State"],exp:"Enugu 330 kV substation is in Enugu State."},
+{q:"Which Nigerian state hosts the Onitsha 330 kV substation?",opts:["Anambra State ✅","Enugu State","Delta State","Imo State"],exp:"Onitsha 330 kV substation is in Anambra State."},
+{q:"Which Nigerian state hosts the Port Harcourt 330 kV substation?",opts:["Rivers State ✅","Bayelsa State","Akwa Ibom State","Cross River State"],exp:"Port Harcourt 330 kV substation is in Rivers State."},
+{q:"Which Nigerian state hosts the Calabar 330 kV substation?",opts:["Cross River State ✅","Akwa Ibom State","Rivers State","Bayelsa State"],exp:"Calabar 330 kV substation is in Cross River State."},
+{q:"Which Nigerian state hosts the Makurdi 330 kV substation?",opts:["Benue State ✅","Nasarawa State","Kogi State","Taraba State"],exp:"Makurdi 330 kV substation is in Benue State."},
+{q:"Which Nigerian state hosts the Lokoja 330 kV substation?",opts:["Kogi State ✅","Niger State","Kwara State","Benue State"],exp:"Lokoja 330 kV substation is in Kogi State."},
+{q:"Which Nigerian state hosts the Minna 330 kV substation?",opts:["Niger State ✅","Kwara State","Kogi State","Kaduna State"],exp:"Minna 330 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Suleja 330 kV substation?",opts:["Niger State ✅","Federal Capital Territory","Kaduna State","Kogi State"],exp:"Suleja 330 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Okpai 330 kV substation?",opts:["Delta State ✅","Edo State","Rivers State","Bayelsa State"],exp:"Okpai 330 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Alaoji 330 kV substation?",opts:["Abia State ✅","Imo State","Rivers State","Akwa Ibom State"],exp:"Alaoji 330 kV substation is in Abia State."},
+{q:"Which Nigerian state hosts the New Haven 330 kV substation?",opts:["Enugu State ✅","Anambra State","Ebonyi State","Imo State"],exp:"New Haven 330 kV substation is in Enugu State."},
+{q:"Which Nigerian state hosts the Ayede 330 kV substation?",opts:["Oyo State ✅","Osun State","Ogun State","Kwara State"],exp:"Ayede 330 kV substation is in Oyo State."},
+{q:"Which Nigerian state hosts the Osogbo 330 kV substation?",opts:["Osun State ✅","Oyo State","Ogun State","Kwara State"],exp:"Osogbo 330 kV substation is in Osun State."},
+{q:"Which Nigerian state hosts the Akure 330 kV substation?",opts:["Ondo State ✅","Ekiti State","Osun State","Oyo State"],exp:"Akure 330 kV substation is in Ondo State."},
+{q:"Which Nigerian state hosts the Ado-Ekiti 330 kV substation?",opts:["Ekiti State ✅","Ondo State","Osun State","Kwara State"],exp:"Ado-Ekiti 330 kV substation is in Ekiti State."},
+{q:"Which Nigerian state hosts the Ilorin 330 kV substation?",opts:["Kwara State ✅","Niger State","Kogi State","Osun State"],exp:"Ilorin 330 kV substation is in Kwara State."},
+{q:"Which Nigerian state hosts the Jebba 330 kV substation?",opts:["Niger State ✅","Kwara State","Kogi State","Oyo State"],exp:"Jebba 330 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Owerri 330 kV substation?",opts:["Imo State ✅","Abia State","Rivers State","Anambra State"],exp:"Owerri 330 kV substation is in Imo State."},
+{q:"Which Nigerian state hosts the Umuahia 330 kV substation?",opts:["Abia State ✅","Imo State","Ebonyi State","Anambra State"],exp:"Umuahia 330 kV substation is in Abia State."},
+{q:"Which Nigerian state hosts the Awka 330 kV substation?",opts:["Anambra State ✅","Enugu State","Imo State","Ebonyi State"],exp:"Awka 330 kV substation is in Anambra State."},
+{q:"Which Nigerian state hosts the Abakaliki 330 kV substation?",opts:["Ebonyi State ✅","Enugu State","Cross River State","Abia State"],exp:"Abakaliki 330 kV substation is in Ebonyi State."},
+{q:"Which Nigerian state hosts the Damaturu 330 kV substation?",opts:["Yobe State ✅","Borno State","Adamawa State","Gombe State"],exp:"Damaturu 330 kV substation is in Yobe State."},
+{q:"Which Nigerian state hosts the Maiduguri 330 kV substation?",opts:["Borno State ✅","Yobe State","Adamawa State","Gombe State"],exp:"Maiduguri 330 kV substation is in Borno State."},
+{q:"Which Nigerian state hosts the Bauchi 330 kV substation?",opts:["Bauchi State ✅","Gombe State","Plateau State","Adamawa State"],exp:"Bauchi 330 kV substation is in Bauchi State."},
+{q:"Which Nigerian state hosts the Katsina 330 kV substation?",opts:["Katsina State ✅","Kano State","Sokoto State","Zamfara State"],exp:"Katsina 330 kV substation is in Katsina State."},
+{q:"Which Nigerian state hosts the Gusau 330 kV substation?",opts:["Zamfara State ✅","Sokoto State","Kebbi State","Katsina State"],exp:"Gusau 330 kV substation is in Zamfara State."},
+{q:"Which Nigerian state hosts the Sokoto 330 kV substation?",opts:["Sokoto State ✅","Kebbi State","Zamfara State","Katsina State"],exp:"Sokoto 330 kV substation is in Sokoto State."},
+{q:"Which Nigerian state hosts the Birnin Kebbi 330 kV substation?",opts:["Kebbi State ✅","Sokoto State","Zamfara State","Niger State"],exp:"Birnin Kebbi 330 kV substation is in Kebbi State."},
+{q:"Which Nigerian state hosts the Yola 132 kV substation?",opts:["Adamawa State ✅","Taraba State","Borno State","Gombe State"],exp:"Yola 132 kV substation is in Adamawa State."},
+{q:"Which Nigerian state hosts the Jalingo 132 kV substation?",opts:["Taraba State ✅","Adamawa State","Gombe State","Bauchi State"],exp:"Jalingo 132 kV substation is in Taraba State."},
+{q:"Which Nigerian state hosts the Lafia 132 kV substation?",opts:["Nasarawa State ✅","Benue State","Plateau State","Kogi State"],exp:"Lafia 132 kV substation is in Nasarawa State."},
+{q:"Which Nigerian state hosts the Otukpo 132 kV substation?",opts:["Benue State ✅","Nasarawa State","Kogi State","Taraba State"],exp:"Otukpo 132 kV substation is in Benue State."},
+{q:"Which Nigerian state hosts the Okene 132 kV substation?",opts:["Kogi State ✅","Niger State","Kwara State","Edo State"],exp:"Okene 132 kV substation is in Kogi State."},
+{q:"Which Nigerian state hosts the Suleja 132 kV substation?",opts:["Niger State ✅","Federal Capital Territory","Kaduna State","Kogi State"],exp:"Suleja 132 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Bida 132 kV substation?",opts:["Niger State ✅","Kwara State","Kogi State","Nasarawa State"],exp:"Bida 132 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Kontagora 132 kV substation?",opts:["Niger State ✅","Kebbi State","Sokoto State","Zamfara State"],exp:"Kontagora 132 kV substation is in Niger State."},
+{q:"Which Nigerian state hosts the Auchi 132 kV substation?",opts:["Edo State ✅","Delta State","Ondo State","Kogi State"],exp:"Auchi 132 kV substation is in Edo State."},
+{q:"Which Nigerian state hosts the Agbor 132 kV substation?",opts:["Delta State ✅","Edo State","Anambra State","Kogi State"],exp:"Agbor 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Ughelli 132 kV substation?",opts:["Delta State ✅","Edo State","Bayelsa State","Rivers State"],exp:"Ughelli 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Warri 132 kV substation?",opts:["Delta State ✅","Edo State","Bayelsa State","Rivers State"],exp:"Warri 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Sapele 132 kV substation?",opts:["Delta State ✅","Edo State","Bayelsa State","Rivers State"],exp:"Sapele 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Ogorode 132 kV substation?",opts:["Delta State ✅","Edo State","Bayelsa State","Rivers State"],exp:"Ogorode 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Oghara 132 kV substation?",opts:["Delta State ✅","Edo State","Bayelsa State","Rivers State"],exp:"Oghara 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Okpai 132 kV substation?",opts:["Delta State ✅","Edo State","Rivers State","Bayelsa State"],exp:"Okpai 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Asaba 132 kV substation?",opts:["Delta State ✅","Anambra State","Edo State","Bayelsa State"],exp:"Asaba 132 kV substation is in Delta State."},
+{q:"Which Nigerian state hosts the Onitsha 132 kV substation?",opts:["Anambra State ✅","Delta State","Enugu State","Imo State"],exp:"Onitsha 132 kV substation is in Anambra State."},
+{q:"Which Nigerian state hosts the Nnewi 132 kV substation?",opts:["Anambra State ✅","Enugu State","Imo State","Abia State"],exp:"Nnewi 132 kV substation is in Anambra State."},
+{q:"Which Nigerian state hosts the Awka 132 kV substation?",opts:["Anambra State ✅","Enugu State","Imo State","Ebonyi State"],exp:"Awka 132 kV substation is in Anambra State."},
+{q:"Which Nigerian state hosts the Enugu 132 kV substation?",opts:["Enugu State ✅","Anambra State","Ebonyi State","Imo State"],exp:"Enugu 132 kV substation is in Enugu State."},
+{q:"Which Nigerian state hosts the Abakaliki 132 kV substation?",opts:["Ebonyi State ✅","Enugu State","Cross River State","Abia State"],exp:"Abakaliki 132 kV substation is in Ebonyi State."},
+{q:"Which Nigerian state hosts the Afikpo 132 kV substation?",opts:["Ebonyi State ✅","Cross River State","Abia State","Enugu State"],exp:"Afikpo 132 kV substation is in Ebonyi State."},
+{q:"Which Nigerian state hosts the Owerri 132 kV substation?",opts:["Imo State ✅","Abia State","Rivers State","Anambra State"],exp:"Owerri 132 kV substation is in Imo State."},
+{q:"Which Nigerian state hosts the Umuahia 132 kV substation?",opts:["Abia State ✅","Imo State","Ebonyi State","Anambra State"],exp:"Umuahia 132 kV substation is in Abia State."},
+{q:"Which Nigerian state hosts the Aba 132 kV substation?",opts:["Abia State ✅","Imo State","Rivers State","Anambra State"],exp:"Aba 132 kV substation is in Abia State."},
+{q:"Which Nigerian state hosts the Port Harcourt 132 kV substation?",opts:["Rivers State ✅","Bayelsa State","Akwa Ibom State","Cross River State"],exp:"Port Harcourt 132 kV substation is in Rivers State."},
+{q:"Which Nigerian state hosts the Elelenwo 132 kV substation?",opts:["Rivers State ✅","Bayelsa State","Akwa Ibom State","Cross River State"],exp:"Elelenwo 132 kV substation is in Rivers State."},
+{q:"Which Nigerian state hosts the Trans-Amadi 132 kV substation?",opts:["Rivers State ✅","Bayelsa State","Akwa Ibom State","Cross River State"],exp:"Trans-Amadi 132 kV substation is in Rivers State."},
+{q:"Which Nigerian state hosts the Oyigbo 132 kV substation?",opts:["Rivers State ✅","Abia State","Akwa Ibom State","Bayelsa State"],exp:"Oyigbo 132 kV substation is in Rivers State."},
+{q:"Which Nigerian state hosts the Ahoada 132 kV substation?",opts:["Rivers State ✅","Bayelsa State","Abia State","Imo State"],exp:"Ahoada 132 kV substation is in Rivers State."},
+{q:"Which Nigerian state hosts the Yenagoa 132 kV substation?",opts:["Bayelsa State ✅","Rivers State","Delta State","Akwa Ibom State"],exp:"Yenagoa 132 kV substation is in Bayelsa State."},
+{q:"Which Nigerian state hosts the Calabar 132 kV substation?",opts:["Cross River State ✅","Akwa Ibom State","Rivers State","Bayelsa State"],exp:"Calabar 132 kV substation is in Cross River State."},
+{q:"Which Nigerian state hosts the Uyo 132 kV substation?",opts:["Akwa Ibom State ✅","Cross River State","Rivers State","Bayelsa State"],exp:"Uyo 132 kV substation is in Akwa Ibom State."},
+{q:"Which Nigerian state hosts the Eket 132 kV substation?",opts:["Akwa Ibom State ✅","Cross River State","Rivers State","Bayelsa State"],exp:"Eket 132 kV substation is in Akwa Ibom State."},
+{q:"Which Nigerian state hosts the Ikot-Ekpene 132 kV substation?",opts:["Akwa Ibom State ✅","Cross River State","Abia State","Rivers State"],exp:"Ikot-Ekpene 132 kV substation is in Akwa Ibom State."},
+{q:"Which Nigerian state hosts the Ogoja 132 kV substation?",opts:["Cross River State ✅","Benue State","Taraba State","Ebonyi State"],exp:"Ogoja 132 kV substation is in Cross River State."},
+{q:"Which Nigerian state hosts the Ikom 132 kV substation?",opts:["Cross River State ✅","Benue State","Ebonyi State","Akwa Ibom State"],exp:"Ikom 132 kV substation is in Cross River State."},
+{q:"Which Nigerian state hosts the Makurdi 132 kV substation?",opts:["Benue State ✅","Nasarawa State","Kogi State","Taraba State"],exp:"Makurdi 132 kV substation is in Benue State."},
+{q:"Which Nigerian state hosts the Lafia 132 kV substation?",opts:["Nasarawa State ✅","Benue State","Plateau State","Kogi State"],exp:"Lafia 132 kV substation is in Nasarawa State."},
+{q:"Which Nigerian state hosts the Jos 132 kV substation?",opts:["Plateau State ✅","Bauchi State","Nasarawa State","Benue State"],exp:"Jos 132 kV substation is in Plateau State."},
+{q:"Which Nigerian state hosts the Bauchi 132 kV substation?",opts:["Bauchi State ✅","Gombe State","Plateau State","Adamawa State"],exp:"Bauchi 132 kV substation is in Bauchi State."},
+{q:"Which Nigerian state hosts the Gombe 132 kV substation?",opts:["Gombe State ✅","Bauchi State","Adamawa State","Borno State"],exp:"Gombe 132 kV substation is in Gombe State."},
+{q:"Which Nigerian state hosts the Yola 132 kV substation?",opts:["Adamawa State ✅","Taraba State","Borno State","Gombe State"],exp:"Yola 132 kV substation is in Adamawa State."},
+{q:"Which Nigerian state hosts the Maiduguri 132 kV substation?",opts:["Borno State ✅","Yobe State","Adamawa State","Gombe State"],exp:"Maiduguri 132 kV substation is in Borno State."},
+{q:"Which Nigerian state hosts the Damaturu 132 kV substation?",opts:["Yobe State ✅","Borno State","Adamawa State","Gombe State"],exp:"Damaturu 132 kV substation is in Yobe State."},
+{q:"Which Nigerian state hosts the Jalingo 132 kV substation?",opts:["Taraba State ✅","Adamawa State","Gombe State","Bauchi State"],exp:"Jalingo 132 kV substation is in Taraba State."}
+];
+
+/* ------------ interactive script ------------ */
+let idx = 0;
+const qNum = document.getElementById('qNum');
+const stem = document.getElementById('stem');
+const opts = document.getElementById('opts');
+const feedback = document.getElementById('feedback');
+const emoji = document.getElementById('emoji');
+const exp = document.getElementById('exp');
+
+function renderQ() {
+  const item = bank[idx];
+  qNum.textContent = `Question ${idx + 1} of ${bank.length}`;
+  stem.textContent = item.q.replace(' ✅','');
+  opts.innerHTML = '';
+  feedback.classList.add('hidden');
+
+  item.opts.forEach((opt,i)=>{
+    const label = document.createElement('label');
+    label.style.display='block';label.style.margin='6px 0';
+    const radio = document.createElement('input');
+    radio.type='radio'; radio.name='opt'; radio.value=i;
+    radio.addEventListener('change',()=>checkAnswer(i));
+    label.appendChild(radio);
+    const txt = opt.replace(' ✅','');
+    label.append(txt);
+    opts.appendChild(label);
+  });
+}
+
+function checkAnswer(chosen) {
+  const item = bank[idx];
+  const correct = item.opts.findIndex(o=>o.includes('✅'));
+  const right = chosen === correct;
+  emoji.textContent = right ? '🏆' : '👶';
+  let html = right ? '<strong>Correct!</strong><br>' : '<strong>Not quite.</strong><br>';
+  const labels = opts.querySelectorAll('label');
+  labels[correct].className = 'rightOpt';
+  html += item.exp;
+  exp.innerHTML = html;
+  feedback.classList.remove('hidden');
+  opts.querySelectorAll('input').forEach(r=>r.disabled=true);
+}
+
+function nextQ() {
+  idx++;
+  if (idx < bank.length) renderQ();
+  else {
+    qNum.textContent = 'All done!';
+    stem.textContent = '🎉 You have completed the 200-question Information Organization quiz.';
+    opts.innerHTML = '';
+    feedback.classList.add('hidden');
+  }
+}
+
+renderQ();
+</script>
+</body>
+</html>

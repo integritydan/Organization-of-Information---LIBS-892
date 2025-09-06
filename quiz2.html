@@ -1,1 +1,160 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LIBS 892 – Information Organization | Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --abu-green:#006b38;
+    --abu-gold:#ffb81c;
+    --light:#f7f7f7;
+    --dark:#222;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Arial,sans-serif;}
+  body{background:var(--light);color:var(--dark);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:15px;}
+  .card{
+    background:#fff;
+    border-radius:8px;
+    box-shadow:0 4px 18px rgba(0,0,0,.15);
+    max-width:600px;width:100%;
+    padding:30px 25px;
+  }
+  .top{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:14px;
+  }
+  a.back{
+    color:var(--abu-green);text-decoration:none;font-weight:600;
+  }
+  .counter{
+    font-weight:600;color:#666;
+  }
+  .question{
+    font-size:20px;margin-bottom:20px;line-height:1.4;
+  }
+  .options label{
+    display:block;
+    padding:12px 15px;
+    margin:8px 0;
+    border:2px solid #ddd;
+    border-radius:6px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .options input{display:none;}
+  .options input:checked + label{
+    border-color:var(--abu-green);
+    background:rgba(0,107,56,.05);
+  }
+  .feedback{
+    margin-top:20px;padding:15px;border-radius:6px;display:none;
+  }
+  .correct{
+    background:#e8f5e9;color:#2e7d32;
+  }
+  .wrong{
+    background:#ffebee;color:#c62828;
+  }
+  .nav{
+    margin-top:25px;display:flex;justify-content:space-between;
+  }
+  .nav button{
+    padding:10px 22px;border:none;border-radius:4px;font-size:15px;cursor:pointer;
+    transition:.2s;
+  }
+  .prev{
+    background:#ccc;color:#333;
+  }
+  .next{
+    background:var(--abu-green);color:#fff;
+  }
+  .nav button:disabled{opacity:.5;cursor:not-allowed;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="top">
+    <a class="back" href="categories.html">&larr; Back to Categories</a>
+    <span class="counter">Question <span id="cur">1</span> of 100</span>
+  </div>
+
+  <div id="qBox">
+    <div class="question" id="qText">Loading question…</div>
+
+    <form class="options" id="opts"></form>
+
+    <div id="feed" class="feedback"></div>
+  </div>
+
+  <div class="nav">
+    <button id="prevBtn" class="prev" disabled>Previous</button>
+    <button id="nextBtn" class="next">Next</button>
+  </div>
+</div>
+
+<script>
+/* ===== EDITABLE BANK ===== */
+const bank=[
+{q:"What does HTML stand for?",o:["Hypertext Marking Language","Hypertext Meta Language","Hypertext Mark-up Language","Hightech Modern Language"],a:2,ex:"The full meaning of HTML is Hypertext Mark-up Language."},
+{q:"Which activity is NOT among the six core activities of information organisation?",o:["Identifying existence of resources","Providing access points","Writing the full text of the document","Providing means of location"],a:2,ex:"Writing the full text is the author’s job; organisers only provide surrogates and access."},
+{q:"A thesaurus primarily controls which aspect of indexing?",o:["Spelling","Vocabulary","Page numbers","Font size"],a:1,ex:"A thesaurus is a controlled vocabulary tool that standardises the terms used."},
+{q:"Informative abstracts include all EXCEPT:",o:["Purpose","Method","Results","Colour of graphs"],a:3,ex:"Colour details are irrelevant; informative abstracts capture essential content only."},
+{q:"Post-coordinate indexing combines terms at which stage?",o:["Indexing","Searching","Printing","Acquisition"],a:1,ex:"Terms are combined by the searcher at the search stage, not by the indexer beforehand."}
+/* add remaining 95 objects here */
+];
+/* ===== END BANK ===== */
+
+let idx=0,score=0,answered=false;
+
+function loadQuestion(){
+  answered=false;
+  const b=bank[idx];
+  document.getElementById('cur').textContent=idx+1;
+  document.getElementById('qText').textContent=b.q;
+  const box=document.getElementById('opts');
+  box.innerHTML='';
+  b.o.forEach((txt,i)=>{
+    box.insertAdjacentHTML('beforeend',
+     `<input type="radio" name="opt" id="o${i}" value="${i}">
+      <label for="o${i}">${txt}</label>`);
+  });
+  document.getElementById('feed').style.display='none';
+  document.getElementById('nextBtn').disabled=true;
+}
+
+function check(){
+  if(answered)return;
+  answered=true;
+  const sel=document.querySelector('input[name="opt"]:checked');
+  if(!sel){alert('Pick an option');return;}
+  const b=bank[idx];
+  const ok=parseInt(sel.value)===b.a;
+  const feed=document.getElementById('feed');
+  feed.className='feedback '+(ok?'correct':'wrong');
+  feed.innerHTML=`<strong>${ok?'Correct!':'Incorrect'}</strong><br>${b.ex}`;
+  feed.style.display='block';
+  if(ok)score++;
+  document.getElementById('nextBtn').disabled=false;
+}
+
+document.getElementById('opts').addEventListener('change',check);
+
+document.getElementById('nextBtn').onclick=()=>{
+  idx++;
+  if(idx>=bank.length){
+    localStorage.setItem('finalScore',score);
+    location.href='finalscore.html';
+  }else{
+    loadQuestion();
+  }
+};
+document.getElementById('prevBtn').onclick=()=>{
+  if(idx>0){idx--;loadQuestion();}
+};
+
+loadQuestion();
+</script>
+</body>
+</html>

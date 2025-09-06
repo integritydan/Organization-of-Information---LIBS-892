@@ -5,70 +5,29 @@
 <title>LIBS 892 – Information Organization | Quiz</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  :root{
-    --abu-green:#006b38;
-    --abu-gold:#ffb81c;
-    --light:#f7f7f7;
-    --dark:#222;
-  }
+  :root{--abu-green:#006b38; --abu-gold:#ffb81c; --light:#f7f7f7; --dark:#222;}
   *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Arial,sans-serif;}
   body{background:var(--light);color:var(--dark);display:flex;justify-content:center;align-items:center;min-height:100vh;padding:15px;}
-  .card{
-    background:#fff;
-    border-radius:8px;
-    box-shadow:0 4px 18px rgba(0,0,0,.15);
-    max-width:600px;width:100%;
-    padding:30px 25px;
-  }
-  .top{
-    display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:14px;
-  }
-  a.back{
-    color:var(--abu-green);text-decoration:none;font-weight:600;
-  }
-  .counter{
-    font-weight:600;color:#666;
-  }
-  .question{
-    font-size:20px;margin-bottom:20px;line-height:1.4;
-  }
-  .options label{
-    display:block;
-    padding:12px 15px;
-    margin:8px 0;
-    border:2px solid #ddd;
-    border-radius:6px;
-    cursor:pointer;
-    transition:.2s;
-  }
+  .card{background:#fff;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.15);max-width:600px;width:100%;padding:30px 25px;}
+  .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:14px;}
+  a.back{color:var(--abu-green);text-decoration:none;font-weight:600;}
+  .counter{font-weight:600;color:#666;}
+  .question{font-size:20px;margin-bottom:20px;line-height:1.4;}
+  .options label{display:block;padding:12px 15px;margin:8px 0;border:2px solid #ddd;border-radius:6px;cursor:pointer;transition:.2s;}
   .options input{display:none;}
-  .options input:checked + label{
-    border-color:var(--abu-green);
-    background:rgba(0,107,56,.05);
-  }
-  .feedback{
-    margin-top:20px;padding:15px;border-radius:6px;display:none;
-  }
-  .correct{
-    background:#e8f5e9;color:#2e7d32;
-  }
-  .wrong{
-    background:#ffebee;color:#c62828;
-  }
-  .nav{
-    margin-top:25px;display:flex;justify-content:space-between;
-  }
-  .nav button{
-    padding:10px 22px;border:none;border-radius:4px;font-size:15px;cursor:pointer;
-    transition:.2s;
-  }
-  .prev{
-    background:#ccc;color:#333;
-  }
-  .next{
-    background:var(--abu-green);color:#fff;
-  }
+  .options input:checked + label{border-color:var(--abu-green);background:rgba(0,107,56,.05);}
+  .options .correct{background:#e8f5e9;border-color:#2e7d32;}
+  .options .wrong{background:#ffebee;border-color:#c62828;}
+  .feedback{margin-top:20px;padding:15px;border-radius:6px;display:none;}
+  .correctBox{background:#e8f5e9;color:#2e7d32;}
+  .wrongBox{background:#ffebee;color:#c62828;}
+  .nav{margin-top:25px;display:flex;justify-content:space-between;}
+  .nav button{padding:10px 22px;border:none;border-radius:4px;font-size:15px;cursor:pointer;transition:.2s;}
+  .prev{background:#ccc;color:#333;}
+  .next{background:var(--abu-green);color:#fff;}
   .nav button:disabled{opacity:.5;cursor:not-allowed;}
+  .hook{font-weight:700;color:#006b38;margin-top:8px;display:block;}
+  .explainer{margin-top:8px;font-size:15px;line-height:1.45;}
 </style>
 </head>
 <body>
@@ -81,9 +40,7 @@
 
   <div id="qBox">
     <div class="question" id="qText">Loading question…</div>
-
     <form class="options" id="opts"></form>
-
     <div id="feed" class="feedback"></div>
   </div>
 
@@ -96,10 +53,10 @@
 <script>
 /* ===== EDITABLE BANK ===== */
 const bank=[
-{q:"Which activity is NOT among the six core activities of information organisation?",o:["Identifying existence of resources","Providing access points","Writing the full text of the document","Providing means of location"],a:2,ex:"Writing the full text is the author’s job; organisers only provide surrogates and access."},
-{q:"A thesaurus primarily controls which aspect of indexing?",o:["Spelling","Vocabulary","Page numbers","Font size"],a:1,ex:"A thesaurus is a controlled vocabulary tool that standardises the terms used."},
-{q:"Informative abstracts include all EXCEPT:",o:["Purpose","Method","Results","Colour of graphs"],a:3,ex:"Colour details are irrelevant; informative abstracts capture essential content only."},
-{q:"Post-coordinate indexing combines terms at which stage?",o:["Indexing","Searching","Printing","Acquisition"],a:1,ex:"Terms are combined by the searcher at the search stage, not by the indexer beforehand."}
+{q:"Which activity is <strong>NOT</strong> among the six core activities of information organisation?",o:["Identifying existence of resources","Providing access points","Writing the full text of the document","Providing means of location"],a:2,ex:"The six activities listed in the course material are: (1) identifying existence of resources, (2) identifying works within them, (3) pulling them into collections, (4) producing standard lists, (5) providing name/title/subject access, and (6) providing location tools. <strong>Writing the complete text is the author’s responsibility; the organiser only creates surrogates and access points.</strong> <span class=hook>HOOK: AUTHORS WRITE, ORGANISERS POINT!</span>"},
+{q:"A thesaurus primarily controls which aspect of indexing?",o:["Spelling","Vocabulary","Page numbers","Font size"],a:1,ex:"According to Module 4, a thesaurus is a ‘controlled and structured vocabulary’ whose purpose is to ensure that indexers and searchers use the same term for the same concept, thereby improving consistency and recall. <strong>It does not deal with spelling rules, page numbers or typographic style.</strong> <span class=hook>HOOK: THESAURUS TAMES TERMS!</span>"},
+{q:"Informative abstracts include all EXCEPT:",o:["Purpose","Method","Results","Colour of graphs"],a:3,ex:"Study Session 2 states that informative abstracts must capture: purpose, method, scope, results and conclusions. <strong>Visual attributes such as colour, font or chart style are cosmetic and never belong in an informative abstract.</strong> <span class=hook>HOOK: CONTENT NOT COSMETICS!</span>"},
+{q:"Post-coordinate indexing combines terms at which stage?",o:["Indexing","Searching","Printing","Acquisition"],a:1,ex:"Module 3 explains that in post-coordinate systems the indexer supplies single, uncombined concepts; the user performs the combination at the search stage. <strong>This gives searchers flexibility to mix terms on-the-fly instead of being locked into pre-set strings.</strong> <span class=hook>HOOK: SEARCHER MIXES, INDEXER FIXES!</span>"}
 /* add remaining 96 objects here */
 ];
 /* ===== END BANK ===== */
@@ -110,13 +67,13 @@ function loadQuestion(){
   answered=false;
   const b=bank[idx];
   document.getElementById('cur').textContent=idx+1;
-  document.getElementById('qText').textContent=b.q;
+  document.getElementById('qText').innerHTML=b.q;
   const box=document.getElementById('opts');
   box.innerHTML='';
   b.o.forEach((txt,i)=>{
     box.insertAdjacentHTML('beforeend',
      `<input type="radio" name="opt" id="o${i}" value="${i}">
-      <label for="o${i}">${txt}</label>`);
+      <label for="o${i}" id="l${i}">${txt}</label>`);
   });
   document.getElementById('feed').style.display='none';
   document.getElementById('nextBtn').disabled=true;
@@ -129,9 +86,16 @@ function check(){
   if(!sel){alert('Pick an option');return;}
   const b=bank[idx];
   const ok=parseInt(sel.value)===b.a;
+
+  /* highlight correct answer in green */
+  document.getElementById('l'+b.a).classList.add('correct');
+  /* if user picked wrong, mark that red */
+  if(!ok) document.getElementById('l'+sel.value).classList.add('wrong');
+
   const feed=document.getElementById('feed');
-  feed.className='feedback '+(ok?'correct':'wrong');
-  feed.innerHTML=`<strong>${ok?'Correct!':'Incorrect'}</strong><br>${b.ex}`;
+  feed.className='feedback '+(ok?'correctBox':'wrongBox');
+  feed.innerHTML=`<strong>${ok?'Correct!':'Incorrect'}</strong>
+                  <div class=explainer>${b.ex}</div>`;
   feed.style.display='block';
   if(ok)score++;
   document.getElementById('nextBtn').disabled=false;
